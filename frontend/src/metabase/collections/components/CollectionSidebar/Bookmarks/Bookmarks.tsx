@@ -1,10 +1,16 @@
 import React, { useState } from "react";
+import Draggable from "react-draggable";
 import { t } from "ttag";
 
 import { PLUGIN_COLLECTIONS } from "metabase/plugins";
 import * as Urls from "metabase/lib/urls";
 import { color } from "metabase/lib/colors";
 
+import {
+  SortableContainer,
+  SortableElement,
+  SortableHandle,
+} from "metabase/components/sortable";
 import Icon from "metabase/components/Icon";
 import Link from "metabase/collections/components/CollectionSidebar/CollectionSidebarLink";
 import BookmarkEntity from "metabase/entities/bookmarks";
@@ -60,6 +66,37 @@ const Label = ({ bookmark }: BookmarkProps) => {
   );
 };
 
+const ListOfBookmarks = ({ children }: { children: JSX.Element }) => (
+  <BookmarkListRoot>{children}</BookmarkListRoot>
+);
+
+type ColumnItemProps = {
+  bookmark: Bookmark;
+  handleDeleteBookmark: (arg0: Bookmark) => void;
+};
+
+const ColumnItem = ({ bookmark, handleDeleteBookmark }: ColumnItemProps) => {
+  const { id, name, type } = bookmark;
+  const url = Urls.bookmark({ id, name, type });
+
+  return (
+    <BookmarkContainer>
+      <Link to={url}>
+        <Label name={name} type={type} />
+      </Link>
+
+      <button onClick={() => handleDeleteBookmark(bookmark)}>
+        <Tooltip tooltip={t`Remove bookmark`} placement="bottom">
+          <Icon name="bookmark" />
+        </Tooltip>
+      </button>
+    </BookmarkContainer>
+  );
+};
+
+const SortableColumnItem = SortableElement(ColumnItem);
+const SortableListOfBookmark = SortableContainer(ListOfBookmarks);
+
 const CollectionSidebarBookmarks = ({
   bookmarks,
   deleteBookmark,
@@ -69,6 +106,8 @@ const CollectionSidebarBookmarks = ({
   const [shouldDisplayBookmarks, setShouldDisplayBookmarks] = useState(
     storedShouldDisplayBookmarks,
   );
+
+  const [orderedBookmarks, setOrderedBookmarks] = useState(bookmarks);
 
   if (bookmarks.length === 0) {
     return null;
@@ -85,6 +124,22 @@ const CollectionSidebarBookmarks = ({
     setShouldDisplayBookmarks(!shouldDisplayBookmarks);
   };
 
+  const handleSortEnd = ({
+    newIndex,
+    oldIndex,
+  }: {
+    newIndex: number;
+    oldIndex: number;
+  }) => {
+    const bookmarksToBeReordered = [...orderedBookmarks];
+    const element = orderedBookmarks[oldIndex];
+
+    bookmarksToBeReordered.splice(oldIndex, 1);
+    bookmarksToBeReordered.splice(newIndex, 0, element);
+
+    setOrderedBookmarks(bookmarksToBeReordered);
+  };
+
   return (
     <BookmarksRoot>
       <SidebarHeading onClick={toggleBookmarkListVisibility}>
@@ -97,24 +152,22 @@ const CollectionSidebarBookmarks = ({
       </SidebarHeading>
 
       {shouldDisplayBookmarks && (
-        <BookmarkListRoot>
-          {bookmarks.map((bookmark, index) => {
-            const { id, name, type } = bookmark;
-            const url = Urls.bookmark({ id, name, type });
-
+        <SortableListOfBookmark
+          onSortEnd={handleSortEnd}
+          lockAxis="y"
+          helperClass=""
+        >
+          {orderedBookmarks.map((bookmark, index) => {
             return (
-              <BookmarkContainer key={`bookmark-${id}`}>
-                <Link to={url}>
-                  <Label bookmark={bookmark} />
-                </Link>
-
-                <button onClick={() => handleDeleteBookmark(bookmark)}>
-                  <Icon name="bookmark" />
-                </button>
-              </BookmarkContainer>
+              <SortableColumnItem
+                index={index}
+                key={bookmark.id}
+                bookmark={bookmark}
+                handleDeleteBookmark={handleDeleteBookmark}
+              />
             );
           })}
-        </BookmarkListRoot>
+        </SortableListOfBookmark>
       )}
     </BookmarksRoot>
   );
