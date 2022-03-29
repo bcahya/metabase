@@ -2,7 +2,7 @@ export type CollectionId = number | "root";
 
 export type CollectionContentModel = "card" | "dataset";
 
-export type Collection = {
+export interface Collection {
   id: CollectionId;
   name: string;
   can_write: boolean;
@@ -19,4 +19,4 @@ export type Collection = {
 
   // Assigned on FE
   originalName?: string;
-};
+}
