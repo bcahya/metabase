@@ -14,7 +14,7 @@ const INITIALIZE_GENERAL_PERMISSIONS =
 export const initializeGeneralPermissions = createThunkAction(
   INITIALIZE_GENERAL_PERMISSIONS,
   () => async dispatch => {
-    await Promise.all([dispatch(loadGeneralPermissions())]);
+    dispatch(loadGeneralPermissions());
   },
 );
 
@@ -51,7 +51,7 @@ export const saveGeneralPermissions = createThunkAction(
     const {
       generalPermissions,
       generalPermissionsRevision,
-    } = getState().generalPermissionsPlugin;
+    } = getState().plugins.generalPermissionsPlugin;
 
     const result = await GeneralPermissionsApi.updateGraph({
       groups: generalPermissions,

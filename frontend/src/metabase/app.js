@@ -39,7 +39,7 @@ import MetabaseSettings from "metabase/lib/settings";
 import api from "metabase/lib/api";
 import { initializeEmbedding } from "metabase/lib/embed";
 
-import { getStore, StoreContext } from "./store";
+import { getStore } from "./store";
 
 import { refreshSiteSettings } from "metabase/redux/settings";
 
@@ -75,13 +75,11 @@ function _init(reducers, getRoutes, callback) {
   let root;
   ReactDOM.render(
     <Provider store={store} ref={ref => (root = ref)}>
-      <StoreContext.Provider value={store}>
-        <DragDropContextProvider backend={HTML5Backend} context={{ window }}>
-          <ThemeProvider theme={theme}>
-            <Router history={history}>{routes}</Router>
-          </ThemeProvider>
-        </DragDropContextProvider>
-      </StoreContext.Provider>
+      <DragDropContextProvider backend={HTML5Backend} context={{ window }}>
+        <ThemeProvider theme={theme}>
+          <Router history={history}>{routes}</Router>
+        </ThemeProvider>
+      </DragDropContextProvider>
     </Provider>,
     document.getElementById("root"),
   );

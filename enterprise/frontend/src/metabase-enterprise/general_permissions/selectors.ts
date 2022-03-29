@@ -14,15 +14,15 @@ export const canManageSubscriptions = (state: GeneralPermissionsState) =>
 
 export const getIsDirty = createSelector(
   (state: GeneralPermissionsState) =>
-    state.generalPermissionsPlugin.generalPermissions,
-  state => state.generalPermissionsPlugin.originalGeneralPermissions,
+    state.plugins.generalPermissionsPlugin?.generalPermissions,
+  state => state.plugins.generalPermissionsPlugin?.originalGeneralPermissions,
   (permissions, originalPermissions) =>
     !_.isEqual(permissions, originalPermissions),
 );
 
 export const getGeneralPermissionEditor = createSelector(
   (state: GeneralPermissionsState) =>
-    state.generalPermissionsPlugin.generalPermissions,
+    state.plugins.generalPermissionsPlugin?.generalPermissions,
   getOrderedGroups,
   (permissions, groups: Group[][]) => {
     if (!permissions || groups == null) {
