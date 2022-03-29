@@ -10,31 +10,62 @@ const CollectionSidebarBookmarksRoot = styled.div`
   margin-bottom: ${space(2)};
 `;
 
-interface BookmarkTypeIconProps {
-  opacity: number;
-}
+export const BookmarkDragIcon = styled(Icon)`
+  left: 14px;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+`;
 
-export const BookmarkTypeIcon = styled(Icon)<BookmarkTypeIconProps>`
+export const BookmarkTypeIcon = styled(Icon)`
   margin-right: 6px;
-  opacity: ${({ opacity }) => opacity};
 `;
 
 export const BookmarkListRoot = styled.div`
   margin: ${space(2)} 0;
 `;
 
-export const BookmarkContainer = styled.div`
+type BookmarkContainerProps = {
+  isSorting: boolean;
+};
+
+export const BookmarkContainer = styled.div<BookmarkContainerProps>`
   overflow: hidden;
   position: relative;
   width: 100%;
 
   &:hover {
-    background: ${color("bg-medium")};
-
+    svg {
+      opacity: 1;
+    }
     button {
       opacity: 0.5;
     }
   }
+
+  ${({ isSorting }) =>
+    isSorting &&
+    css`
+      background: white;
+
+      &:hover {
+        background: white;
+
+        a {
+          background: white;
+        }
+
+        button {
+          opacity: 0;
+        }
+
+        > svg {
+          opacity: 0;
+        }
+      }
+    `}
 
   button {
     opacity: 0;
