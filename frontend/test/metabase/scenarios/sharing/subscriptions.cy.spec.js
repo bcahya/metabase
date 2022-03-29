@@ -29,7 +29,6 @@ describe("scenarios > dashboard > subscriptions", () => {
       .click();
 
     cy.icon("subscription").should("not.exist");
-    cy.icon("share").should("not.exist");
     cy.findByText(/Share this dashboard with people *./i).should("not.exist");
   });
 
@@ -53,7 +52,6 @@ describe("scenarios > dashboard > subscriptions", () => {
     // Dashboard subscriptions are not shown because
     // getting notifications with static text-only cards doesn't make a lot of sense
     cy.icon("subscription").should("not.exist");
-    cy.icon("share").should("not.exist");
     cy.findByText(/Share this dashboard with people *./i);
   });
 
@@ -370,7 +368,6 @@ describe("scenarios > dashboard > subscriptions", () => {
 function openDashboardSubscriptions(dashboard_id = 1) {
   // Orders in a dashboard
   visitDashboard(dashboard_id);
-  cy.icon("share").click();
   cy.icon("subscription").click();
 }
 
